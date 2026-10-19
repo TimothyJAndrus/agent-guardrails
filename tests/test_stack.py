@@ -11,7 +11,7 @@ from stack.guardrails_stack import AgentGuardrailsDemoStack, base_model_id  # no
 
 
 def template():
-    app = cdk.App(context={"modelId": "us.amazon.nova-pro-v1:0", "modelMode": "bedrock",
+    app = cdk.App(context={"modelId": "us.anthropic.claude-haiku-4-5-20251001-v1:0", "modelMode": "bedrock",
                            "approverEmail": "tim@aitecxo.com"})
     s = AgentGuardrailsDemoStack(app, "T", env=cdk.Environment(account="358254890860", region="us-west-2"))
     return Template.from_stack(s)

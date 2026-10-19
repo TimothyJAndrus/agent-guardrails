@@ -47,7 +47,7 @@ AWS_PROFILE=Tian001 .venv/bin/python tests/live_model_check.py   # real Bedrock,
 The stack tests assert the controls are in the template: the agent role has no write, SNS, or Step Functions permissions and no wildcard actions; only the Decide function can resume the workflow; logging is `ALL`.
 
 ## Model
-Default: `us.amazon.nova-pro-v1:0` (available in the account today). Switch with `-c modelId=...`; the IAM policy follows the model ID. Anthropic models on Bedrock need the one-time Anthropic use-case form in the Bedrock console first.
+Default: `us.anthropic.claude-haiku-4-5-20251001-v1:0` (Claude Haiku 4.5; enabled Oct 19 after the Anthropic use-case form). Fallback: `-c modelId=us.amazon.nova-pro-v1:0` (Amazon Nova Pro, tested working). Switch with `-c modelId=...`; the IAM policy follows the model ID. Anthropic models on Bedrock need the one-time Anthropic use-case form in the Bedrock console first.
 
 `MODEL_MODE=scripted` swaps Bedrock for a labeled, deterministic stand-in (every answer starts with `[scripted]`). Use it only for rehearsal, or as an announced fallback if venue Wi-Fi fails.
 

@@ -17,7 +17,7 @@ from botocore.exceptions import ClientError
 
 from common import audit
 
-MODEL_ID = os.environ.get("MODEL_ID", "us.amazon.nova-pro-v1:0")
+MODEL_ID = os.environ.get("MODEL_ID", "us.anthropic.claude-haiku-4-5-20251001-v1:0")
 BUCKET = os.environ.get("DATA_BUCKET", "")
 MODEL_MODE = os.environ.get("MODEL_MODE", "bedrock")  # "bedrock" | "scripted" (rehearsal only)
 MAX_TURNS = 6
@@ -27,6 +27,8 @@ SYSTEM = (
     "You are an operations assistant for Acme Outdoor Gear. Use read_document to read any company "
     "file the user names. You cannot send, refund, or change anything yourself: use propose_action "
     "for a customer-facing action (at most one per request) and a human will approve or reject it. "
+    "When asked to reply to or draft a message for a customer, put the message in propose_action "
+    "instead of writing it in your answer; do not ask whether to propose it. "
     "If a tool returns an error, report it plainly and do not guess the content. Keep answers short."
 )
 
