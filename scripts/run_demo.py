@@ -89,6 +89,13 @@ def record(arn=None):
                 continue
             if rec.get("audit"):
                 events.append(rec)
+    final = json.loads(sf.describe_execution(executionArn=arn).get("output") or "{}")
+    if "approval" in final:
+        ap = final["approval"]
+        print(f"\nHuman decision: {ap.get('decision')} by {ap.get('approver')} at "
+              f"{time.strftime('%H:%M:%S', time.localtime(ap.get('decided_at', 0)))}")
+    if "result" in final:
+        print(f"Executed (simulated send): {final['result'].get('executed')}")
     print("\nAgent audit trail:")
     for r in sorted(events, key=lambda r: r["ts"]):
         detail = {k: v for k, v in r.items() if k not in ("audit", "ts", "execution", "step")}
