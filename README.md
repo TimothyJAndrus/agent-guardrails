@@ -56,3 +56,13 @@ Default: `us.anthropic.claude-haiku-4-5-20251001-v1:0` (Claude Haiku 4.5; enable
 npx cdk destroy    # removes everything, including the bucket and logs
 ```
 Cost while idle is effectively zero: no servers run between demos.
+
+## Rehearsal log
+- **Oct 19, 2026:** full run on Claude Haiku 4.5, approved from Tim's phone. Approval email arrived quickly and the page worked on mobile Gmail. Pause to tap: 19 s. Whole approval moment: ~26 s.
+
+## Run of show (after slide 9, ~4 minutes)
+1. `run_demo.py limits` (~10 s): "The CFO is in a hurry. Watch what AWS says."
+2. `run_demo.py approve` (~30 s): hold up the phone, read the draft aloud, tap Approve.
+3. `run_demo.py record` (~15 s): "Every step, who approved it, and when. That's the record."
+Then go to slide 10. Mirror the phone to the projector (AirPlay to the presenting Mac) so the room sees the approval.
+Fallback if venue Wi-Fi fails: `-c modelMode=scripted` (announce it), or show the recorded replay output.
