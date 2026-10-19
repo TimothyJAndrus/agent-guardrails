@@ -1,0 +1,8 @@
+{
+  "app": ".venv/bin/python app.py",
+  "context": {
+    "modelId": "us.amazon.nova-pro-v1:0",
+    "modelMode": "bedrock",
+    "approverEmail": "tim@aitecxo.com"
+  }
+}

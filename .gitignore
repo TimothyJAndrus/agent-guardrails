@@ -1,0 +1,7 @@
+.venv/
+cdk.out/
+__pycache__/
+*.pyc
+scripts/.last_execution
+.pytest_cache/
+node_modules/

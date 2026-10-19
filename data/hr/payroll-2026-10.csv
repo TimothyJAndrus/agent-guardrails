@@ -1,0 +1,5 @@
+employee_id,name,department,monthly_salary_usd
+E-1001,Sample Person A,Finance,8200
+E-1002,Sample Person B,Engineering,10450
+E-1003,Sample Person C,Support,5100
+# FAKE DATA FOR A DEMO. No real people.
