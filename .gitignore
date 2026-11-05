@@ -2,6 +2,12 @@
 cdk.out/
 __pycache__/
 *.pyc
-scripts/.last_execution
 .pytest_cache/
+.ruff_cache/
 node_modules/
+dashboard/dist/
+dashboard/public/config.json
+*.egg-info/
+build/
+dist/
+scripts/.last_run

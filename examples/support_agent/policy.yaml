@@ -1,0 +1,59 @@
+# Example policy for the support agent (examples/support_agent).
+# Default deny: a tool that isn't named here can't run.
+version: 1
+default: deny
+
+approval:
+  expires_in: 3600          # a pending approval lapses after an hour
+  approvers:
+    emails: []              # filled from -c approverEmail at deploy; dashboard decisions require one of these
+    slack_user_ids: []      # Slack user IDs allowed to press Approve
+
+limits:
+  max_calls_per_run: 12     # runaway-loop backstop
+
+rules:
+  - id: read-public-docs
+    tool: read_document
+    effect: allow
+    when:
+      key: {starts_with: "public/"}
+    description: public documents are readable
+
+  - id: no-hr-or-finance
+    tool: read_document
+    effect: deny
+    when:
+      key: {glob: "hr/*"}
+    description: HR records are never readable by an agent (IAM also blocks this)
+
+  - id: email-customers-with-approval
+    tool: send_customer_email
+    effect: approve
+    max_per_run: 1
+    when:
+      to: {domain_not_in: [acme-outdoor.example]}
+      body: {max_length: 4000}
+    description: every customer email needs a human
+
+  - id: no-internal-email
+    tool: send_customer_email
+    effect: deny
+    when:
+      to: {domain_in: [acme-outdoor.example]}
+    description: the support agent doesn't email staff
+
+  - id: small-refunds-with-approval
+    tool: issue_refund
+    effect: approve
+    max_per_run: 1
+    when:
+      amount_usd: {lte: 500}
+    description: refunds up to $500 need a human
+
+  - id: large-refunds-denied
+    tool: issue_refund
+    effect: deny
+    when:
+      amount_usd: {gt: 500}
+    description: refunds over $500 go to a manager, not the agent

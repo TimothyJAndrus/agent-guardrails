@@ -1,4 +1,6 @@
+# Runtime (the Lambda asset vendors nothing: boto3 ships with the Python 3.13 runtime)
+boto3==1.43.125
+PyYAML==6.0.3
+# CDK app and construct
 aws-cdk-lib==2.273.0
-constructs>=10.0.0,<11.0.0
-boto3
-pytest
+constructs==10.8.1
