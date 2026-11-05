@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 import aws_cdk as cdk
 
-from stack.guardrails_stack import AgentGuardrailsDemoStack
+from examples.support_agent.stack import SupportAgentStack
 
 app = cdk.App()
-AgentGuardrailsDemoStack(
-    app, "AgentGuardrailsDemo",
-    env=cdk.Environment(account=app.node.try_get_context("account") or "358254890860",
+SupportAgentStack(
+    app, "AgentGuardrails",
+    env=cdk.Environment(account=app.node.try_get_context("account") or None,
                         region=app.node.try_get_context("region") or "us-west-2"),
-    description="AWS Utah talk demo: an AI agent with limits, a human approver, and a record.",
+    description="agent-guardrails example: a support agent behind an action gate (policy, approvals, replay).",
 )
 app.synth()

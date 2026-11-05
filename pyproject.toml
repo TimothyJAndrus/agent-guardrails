@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-guardrails"
+version = "0.1.0"
+description = "An action gate for AI agents: policy on every tool call, human approval over dashboard/Slack/email, replayable hash-chained audit. Python SDK + AWS CDK construct."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [{ name = "Timothy Andrus" }]
+dependencies = ["boto3>=1.35"]
+
+[project.optional-dependencies]
+yaml = ["PyYAML>=6"]
+cdk = ["aws-cdk-lib>=2.273.0,<3", "constructs>=10,<11", "PyYAML>=6"]
+
+[tool.setuptools]
+packages = ["agent_guardrails", "guardrails_cdk", "service"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-p no:cacheprovider"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["dashboard", "cdk.out"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "I", "S", "C4"]
+ignore = ["S101", "E731", "B023"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S105", "S106", "S108", "B017", "SIM115"]

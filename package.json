@@ -1,18 +1,13 @@
 {
-  "name": "demo",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "directories": {
-    "test": "tests"
-  },
+  "name": "agent-guardrails",
+  "version": "0.1.0",
+  "description": "CDK CLI pin for agent-guardrails",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "synth": "cdk synth --quiet"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
-    "aws-cdk": "^2.1145.0"
-  }
+    "aws-cdk": "^2.1148.0"
+  },
+  "private": "true"
 }

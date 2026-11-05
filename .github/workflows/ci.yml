@@ -1,0 +1,49 @@
+name: ci
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check .
+      - name: Unit, attack, DynamoDB (moto), service, and synth-assertion tests
+        run: pytest -v
+      - name: Local demo runs end to end (scripted model, auto-approve)
+        run: python -m examples.support_agent.local --auto approve
+      - name: Dependency audit (fails on any known vulnerability)
+        run: pip-audit -r requirements.txt
+  cdk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: python -m venv .venv && .venv/bin/pip install -r requirements.txt
+      - run: npm ci
+      - name: npm audit (root, CDK CLI)
+        run: npm audit --audit-level=low
+      - name: Dashboard build, tests, audit
+        working-directory: dashboard
+        run: npm ci && npm test && npm run build && npm audit --audit-level=low
+      - name: cdk synth (no AWS credentials needed)
+        run: npx cdk synth --quiet -c account=123456789012 -c approverEmail=ci@example.com -c slack=true
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: gitleaks (full history)
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.28.0/gitleaks_8.28.0_linux_x64.tar.gz | tar xz gitleaks
+          ./gitleaks git --redact --verbose .
