@@ -76,7 +76,8 @@ def replay(run_id=None):
     store = DynamoStore(table(outputs()), boto3.resource("dynamodb", region_name=REGION))
     events = store.events(run_id)
     chain = verify(events)
-    print(f"\n=== RECORD {run_id}: {len(events)} events, chain {'verified' if chain['ok'] else 'BROKEN: ' + str(chain)}")
+    status = "verified" if chain["ok"] else f"BROKEN: {chain}"
+    print(f"\n=== RECORD {run_id}: {len(events)} events, chain {status}")
     t0 = events[0]["ts"] if events else 0
     for e in events:
         d = e["data"]
