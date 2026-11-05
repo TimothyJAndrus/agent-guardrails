@@ -1,7 +1,6 @@
 """DynamoStore against moto: the conditional writes that make the deployed gate race-safe."""
 
 import os
-import threading
 
 import boto3
 import pytest
@@ -83,20 +82,39 @@ def test_duplicate_run_id_rejected(gate):
     assert e.value.status == 409
 
 
-def test_concurrent_audit_appends_keep_one_chain(gate):
+def test_lost_race_on_audit_seq_retries_and_keeps_one_chain(gate):
+    """Another writer takes seq N between our read of the head and our put. The conditional put must
+    fail, and the retry must append at N+1 chained to the winner. (Deterministic: moto's backend isn't
+    thread-safe, so a threaded version of this test would be testing moto, not the store.)"""
+    store = gate.store
     run = gate.start_run("support-bot", "t")["id"]
-    errs = []
+    real_last = store._last_event
+    stale = {"n": 1}
 
-    def go(i):
-        try:
-            gate.store.append_event(run, "probe", "support-bot", "", {"i": i})
-        except Exception as e:  # pragma: no cover
-            errs.append(e)
-    ts = [threading.Thread(target=go, args=(i,)) for i in range(6)]
-    [t.start() for t in ts]
-    [t.join() for t in ts]
+    def racing_last(run_id):
+        head = real_last(run_id)
+        if stale["n"]:
+            stale["n"] -= 1
+            # A competing writer lands seq 1 right after we read the head (seq 0).
+            from agent_guardrails.audit import make_event
+            from agent_guardrails.store import _to_ddb
+            ev = make_event(run_id, 1, head["hash"], "competitor", "other", "", {})
+            store.table.put_item(Item={"pk": f"RUN#{run_id}", "sk": "EV#00000001", **_to_ddb(ev)})
+        return head
+    store._last_event = racing_last
+    ours = store.append_event(run, "ours", "support-bot", "", {"x": 1})
+    store._last_event = real_last
+    ev = store.events(run)
+    assert [e["step"] for e in ev] == ["run.started", "competitor", "ours"]
+    assert ours["seq"] == 2 and verify(ev)["ok"]
+
+
+def test_sequential_appends_chain(gate):
+    run = gate.start_run("support-bot", "t")["id"]
+    for i in range(6):
+        gate.store.append_event(run, "probe", "support-bot", "", {"i": i})
     ev = gate.store.events(run)
-    assert not errs and len(ev) == 7 and verify(ev)["ok"]
+    assert len(ev) == 7 and verify(ev)["ok"]
 
 
 def test_tampering_in_table_detected(gate):
