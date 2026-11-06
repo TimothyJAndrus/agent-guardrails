@@ -11,13 +11,14 @@ agent ──tool call──▶ gate ──policy──┬─ allow ────�
                                                    every step ──▶ hash-chained audit ──▶ replay
 ```
 
-Part of a trusted-agent stack:
+Part of the **trusted-agent stack**, four small open-source pieces for running AI agents a company can trust:
 
 | | Question it answers |
 |---|---|
-| [agent-credential-broker](https://github.com/TimothyJAndrus/agent-credential-broker) | What can the agent **access**? Short-lived scoped credentials. |
-| **agent-guardrails** | What can the agent **do**, and who approved it? |
-| [agent-trap-evals](https://github.com/TimothyJAndrus/agent-trap-evals) | Is the agent's output **true**? |
+| [agent-credential-broker](https://github.com/TimothyJAndrus/agent-credential-broker) | What can the agent **access**? Short-lived, scoped credentials. |
+| **agent-guardrails** | What can the agent **do**, and who approved it? Policy and human approval on every tool call. |
+| [agent-trap-evals](https://github.com/TimothyJAndrus/agent-trap-evals) | Is the agent's output **true**? Traps a shallow check passes and a deeper check fails. |
+| [note-taking-service](https://github.com/TimothyJAndrus/note-taking-service) | A real app using them: cited Q&A over team notes, and an MCP server behind the gate. |
 
 ## In code
 
